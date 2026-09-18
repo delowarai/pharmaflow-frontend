@@ -25,9 +25,18 @@ export default function Login() {
       await login(form);
       navigate('/dashboard');
     } catch (requestError) {
+      const detail = requestError.response?.data?.detail;
+      const detailMessage = Array.isArray(detail)
+        ? detail.map((item) => item.msg).filter(Boolean).join(', ')
+        : detail;
+
       setError(
         requestError.response?.data?.message ||
           requestError.response?.data?.error ||
+          detailMessage ||
+          (requestError.request && !requestError.response
+            ? 'The backend could not be reached. Check the API URL and backend CORS settings.'
+            : '') ||
           'Unable to sign in. Check the backend URL and your credentials.',
       );
     } finally {

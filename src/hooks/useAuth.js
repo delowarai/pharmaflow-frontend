@@ -9,7 +9,12 @@ export const useAuth = () => {
     async (payload) => {
       const response = await loginRequest(payload);
       const nextUser = response?.data?.user || { name: 'Pharma Admin' };
-      const nextToken = response?.data?.token || 'demo-token';
+      const nextToken = response?.data?.access_token;
+
+      if (!nextToken) {
+        throw new Error('The login response did not include an access token.');
+      }
+
       setAuth(nextUser, nextToken);
       return response;
     },
