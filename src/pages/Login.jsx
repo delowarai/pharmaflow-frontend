@@ -9,6 +9,7 @@ export default function Login() {
   const { login } = useAuth();
   const [form, setForm] = useState({ email: 'admin@pharmaflow.io', password: 'admin123' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -18,10 +19,17 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       await login(form);
       navigate('/dashboard');
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          requestError.response?.data?.error ||
+          'Unable to sign in. Check the backend URL and your credentials.',
+      );
     } finally {
       setLoading(false);
     }
@@ -37,6 +45,12 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input label="Email address" id="email" name="email" value={form.email} onChange={handleChange} />
         <Input label="Password" id="password" name="password" type="password" value={form.password} onChange={handleChange} />
+
+        {error ? (
+          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
 
         <div className="flex items-center justify-between text-sm text-slate-500">
           <label className="flex items-center gap-2">
