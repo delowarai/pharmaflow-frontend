@@ -29,10 +29,15 @@ export default function Login() {
       const detailMessage = Array.isArray(detail)
         ? detail.map((item) => item.msg).filter(Boolean).join(', ')
         : detail;
+      const authenticationMessage =
+        requestError.response?.status === 401
+          ? 'Incorrect email or password. Use an account registered in the PharmaFlow backend.'
+          : '';
 
       setError(
         requestError.response?.data?.message ||
           requestError.response?.data?.error ||
+          authenticationMessage ||
           detailMessage ||
           (requestError.request && !requestError.response
             ? 'The backend could not be reached. Check the API URL and backend CORS settings.'
@@ -74,9 +79,6 @@ export default function Login() {
         </Button>
       </form>
 
-      <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-        Demo credentials: admin@pharmaflow.io / admin123
-      </div>
     </div>
   );
 }
